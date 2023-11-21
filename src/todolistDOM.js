@@ -2,16 +2,6 @@ import ToDoList from "./todolist"
 
 export default class ToDoListDOM {
     static priority = [Number.MAX_SAFE_INTEGER]
-    static get options() {
-        return {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true
-        }
-    }
     constructor() {
         this.table = document.querySelector("table")
         this.initializeEventListeners()
@@ -22,7 +12,6 @@ export default class ToDoListDOM {
         let index = ToDoListDOM.priority.findIndex(n => n <= item.priority)
         let row = this.table.insertRow(index)
         let cell = row.insertCell()
-        item.dueDate = item.dueDate.toLocaleDateString('en-us', ToDoListDOM.options)
         for (let data in item) {
             cell = row.insertCell()
             cell.textContent = item[data]
@@ -42,7 +31,7 @@ export default class ToDoListDOM {
             e.preventDefault()
             const title = document.getElementById("title").value;
             const description = document.getElementById("description").value;
-            const date = new Date(document.getElementById("date").value)
+            const date = document.getElementById("date").value
             const priority = document.getElementById("priority").value;
             const item = new ToDoList(title, description, date, priority)
             this.add(item)
