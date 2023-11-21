@@ -1,26 +1,28 @@
 import ToDoList from "./todolist"
 
 export default class ToDoListDOM {
-    static priority = [Number.MAX_SAFE_INTEGER]
     constructor() {
         this.table = document.querySelector("table")
+        this.toDoList = new ToDoList
         this.initializeEventListeners()
     }
     add(item) {
-        ToDoListDOM.priority.unshift(item.priority)
-        ToDoListDOM.priority.sort((a, b) => b - a)
-        let index = ToDoListDOM.priority.findIndex(n => n <= item.priority)
-        let row = this.table.insertRow(index)
+        let start = performance.now()
+        this.toDoList.addTask(item)
+        let index = this.toDoList.latestTaskIndex
+        let row = this.table.insertRow(index + 1)
         let cell = row.insertCell()
-        for (let data in item) {
+        let task = this.toDoList.tasksList[index]
+        for (let data in task) {
             cell = row.insertCell()
-            cell.textContent = item[data]
+            cell.textContent = task[data]
         }
         this.sortTable()
+        console.log(performance.now() - start)
     }
     sortTable() {
-        let tempTable = [...this.table.rows].slice(1)
-        tempTable.forEach((row, index) => {
+        let rows = [...this.table.rows].slice(1)
+        rows.forEach((row, index) => {
             row.cells[0].textContent = index + 1
         });
     }
@@ -29,11 +31,12 @@ export default class ToDoListDOM {
     initializeEventListeners() {
         document.querySelector("form").addEventListener('submit', (e) => {
             e.preventDefault()
-            const title = document.getElementById("title").value;
-            const description = document.getElementById("description").value;
-            const date = document.getElementById("date").value
-            const priority = document.getElementById("priority").value;
-            const item = new ToDoList(title, description, date, priority)
+            let item = {
+                title: document.getElementById("title").value,
+                description: document.getElementById("description").value,
+                dueDate: document.getElementById("date").value,
+                priority: document.getElementById("priority").value
+            }
             this.add(item)
         })
     }
